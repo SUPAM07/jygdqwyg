@@ -1,0 +1,24 @@
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache
+.pytest_cache/
+
+# Node
+node_modules/
+frontend/node_modules/
+.npm
+
+# Build outputs
+# Note: frontend/dist can be built via `npm run build` or multi-stage Docker
+
+# OS files & logs
+.DS_Store
+Thumbs.db
+*.log

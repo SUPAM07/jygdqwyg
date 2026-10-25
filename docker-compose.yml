@@ -1,0 +1,20 @@
+services:
+  aerotrade-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aerotrade-uk-portal
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - DATABASE_PATH=/app/backend/data/bmrs_data.db
+      - DEFAULT_GATE_CLOSURE_HOUR=11
+    volumes:
+      - ./backend/data:/app/backend/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
