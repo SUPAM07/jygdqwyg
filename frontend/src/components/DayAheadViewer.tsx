@@ -89,12 +89,11 @@ export const DayAheadViewer: React.FC<DayAheadViewerProps> = ({ availableDates }
       p.ape_pct ?? ''
     ]);
 
-    const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const csvString = [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.setAttribute('href', url);
     link.setAttribute(
       'download',
       `aerotrade_day_ahead_${deliveryDate}_gate${gateClosureHour}h_${resolution}.csv`
@@ -102,6 +101,7 @@ export const DayAheadViewer: React.FC<DayAheadViewerProps> = ({ availableDates }
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // Prepare Chart.js dataset

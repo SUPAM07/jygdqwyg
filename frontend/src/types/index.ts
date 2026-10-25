@@ -134,6 +134,7 @@ export interface ProcurementSimResponse {
   naive_thermal_procured_mwh: number;
   hedged_thermal_procured_mwh: number;
   recommended_safety_buffer_avg_mw: number;
+  total_avoided_penalties_gbp?: number | null;
   total_imbalance_savings_gbp?: number | null;
   periods: ProcurementPeriodItem[];
 }

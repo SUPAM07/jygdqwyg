@@ -46,8 +46,10 @@ def simulate_procurement_decision(req: ProcurementSimRequest) -> ProcurementSimR
     period_results: List[ProcurementPeriodItem] = []
     tot_naive_thermal_mwh = 0.0
     tot_hedged_thermal_mwh = 0.0
-    tot_savings_gbp = 0.0
     buffers: List[float] = []
+    tot_naive_cost = 0.0
+    tot_hedged_cost = 0.0
+    tot_avoided_penalties = 0.0
     
     # Balancing Mechanism cash-out price (£/MWh)
     sbp_cashout_price = req.thermal_cost_per_mwh * req.cashout_penalty_multiplier
@@ -62,7 +64,6 @@ def simulate_procurement_decision(req: ProcurementSimRequest) -> ProcurementSimR
         actual_wind = p.actual_mw
         
         # Calculate empirical safety buffer for this hour
-        # Diurnal stats give us P50, P90 error for this hour.
         dh = diurnal_by_hour.get(hour)
         if dh:
             if pct_rank == 50:
@@ -101,15 +102,18 @@ def simulate_procurement_decision(req: ProcurementSimRequest) -> ProcurementSimR
             naive_shortfall = round(max(0.0, demand_mw - (naive_thermal + actual_wind)), 1)
             hedged_shortfall = round(max(0.0, demand_mw - (hedged_thermal + actual_wind)), 1)
             
+            # Avoided cash-out penalties on shortfall
+            avoided_penalty = (naive_shortfall - hedged_shortfall) * sbp_cashout_price
+            tot_avoided_penalties += max(0.0, avoided_penalty)
+
             # Cashout penalty difference:
-            # Naive pays: Naive Thermal @ DA Cost + Shortfall @ Cashout SBP
             naive_cost = (naive_thermal * req.thermal_cost_per_mwh) + (naive_shortfall * sbp_cashout_price)
-            # Hedged pays: Hedged Thermal @ DA Cost + Shortfall @ Cashout SBP
             hedged_cost = (hedged_thermal * req.thermal_cost_per_mwh) + (hedged_shortfall * sbp_cashout_price)
             
-            # If actual was higher than forecast, utility spills excess at System Sell Price (simplified parity)
-            saving_gbp = round(max(0.0, naive_cost - hedged_cost), 2)
-            tot_savings_gbp += saving_gbp
+            tot_naive_cost += naive_cost
+            tot_hedged_cost += hedged_cost
+            
+            saving_gbp = round(naive_cost - hedged_cost, 2)
             
         period_results.append(ProcurementPeriodItem(
             startTime=p.startTime,
@@ -131,6 +135,9 @@ def simulate_procurement_decision(req: ProcurementSimRequest) -> ProcurementSimR
     tot_wind_fcst_mwh = round(sum(p.forecast_wind_mw for p in period_results), 1)
     tot_wind_act_mwh = round(sum(p.actual_wind_mw for p in period_results if p.actual_wind_mw is not None), 1) if sched.total_actual_mwh is not None else None
     
+    net_savings = round(tot_naive_cost - tot_hedged_cost, 2) if sched.total_actual_mwh is not None else None
+    gross_avoided = round(tot_avoided_penalties, 2) if sched.total_actual_mwh is not None else None
+
     return ProcurementSimResponse(
         delivery_date=req.delivery_date,
         confidence_level=req.confidence_level.upper(),
@@ -143,6 +150,7 @@ def simulate_procurement_decision(req: ProcurementSimRequest) -> ProcurementSimR
         naive_thermal_procured_mwh=round(tot_naive_thermal_mwh, 1),
         hedged_thermal_procured_mwh=round(tot_hedged_thermal_mwh, 1),
         recommended_safety_buffer_avg_mw=avg_buffer,
-        total_imbalance_savings_gbp=round(tot_savings_gbp, 2) if sched.total_actual_mwh is not None else None,
+        total_avoided_penalties_gbp=gross_avoided,
+        total_imbalance_savings_gbp=net_savings,
         periods=period_results
     )

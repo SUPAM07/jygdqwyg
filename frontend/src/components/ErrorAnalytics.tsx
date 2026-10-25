@@ -291,8 +291,21 @@ export const ErrorAnalytics: React.FC = () => {
               Yellow bars indicate positive bias (wind shortfall vs forecast). Cyan line tracks absolute error volatility.
             </p>
           </div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            <span className="badge badge-cyan">Decision Gate: {gateClosureHour}:00 UTC</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>DA Gate:</span>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {[7, 9, 11, 13, 17].map((hour) => (
+                <button
+                  key={hour}
+                  className={`btn ${gateClosureHour === hour ? 'btn-active' : 'btn-secondary'}`}
+                  onClick={() => setGateClosureHour(hour)}
+                  style={{ padding: '4px 9px', fontSize: '0.75rem' }}
+                >
+                  {hour.toString().padStart(2, '0')}:00 UTC
+                  {hour === 11 && <span style={{ marginLeft: 3, color: 'var(--accent-cyan)' }}>(Auction)</span>}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         <div style={{ height: 340, width: '100%' }}>

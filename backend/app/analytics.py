@@ -279,12 +279,11 @@ def get_diurnal_profile(
     Compute forecast error characteristics grouped by hour of the day (0-23 UTC).
     Identifies diurnal error patterns (e.g. morning ramp vs evening peak).
     """
-    summary = get_summary_metrics(start_date_str, end_date_str, gate_closure_hour)
-    dates = [d.date for d in summary.daily_metrics]
-    
+    dates = pd.date_range(start_date_str, end_date_str, freq="D")
     hour_buckets: Dict[int, List[Dict[str, float]]] = {h: [] for h in range(24)}
     
-    for d_str in dates:
+    for d in dates:
+        d_str = d.strftime("%Y-%m-%d")
         sched = get_day_ahead_schedule(d_str, gate_closure_hour=gate_closure_hour, resolution="hourly")
         for p in sched.periods:
             if p.error_mw is not None:

@@ -185,9 +185,12 @@ export const ProcurementSimulator: React.FC<ProcurementSimulatorProps> = ({ avai
             <input
               type="number"
               className="form-control mono"
-              value={baselineDemand}
-              onChange={(e) => setBaselineDemand(Number(e.target.value))}
-              min={10000}
+              value={baselineDemand === 0 ? '' : baselineDemand}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                setBaselineDemand(isNaN(val) ? 0 : Math.max(0, val));
+              }}
+              min={1000}
               max={60000}
               step={1000}
               style={{ width: '100%', fontWeight: 600 }}
@@ -221,9 +224,12 @@ export const ProcurementSimulator: React.FC<ProcurementSimulatorProps> = ({ avai
             <input
               type="number"
               className="form-control mono"
-              value={thermalCost}
-              onChange={(e) => setThermalCost(Number(e.target.value))}
-              min={40}
+              value={thermalCost === 0 ? '' : thermalCost}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                setThermalCost(isNaN(val) ? 0 : Math.max(0, val));
+              }}
+              min={10}
               max={300}
               style={{ width: '100%', fontWeight: 600 }}
             />
@@ -237,8 +243,11 @@ export const ProcurementSimulator: React.FC<ProcurementSimulatorProps> = ({ avai
             <input
               type="number"
               className="form-control mono"
-              value={cashoutMultiplier}
-              onChange={(e) => setCashoutMultiplier(Number(e.target.value))}
+              value={cashoutMultiplier === 0 ? '' : cashoutMultiplier}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                setCashoutMultiplier(isNaN(val) ? 1.0 : Math.max(1.0, val));
+              }}
               min={1.0}
               max={5.0}
               step={0.1}
@@ -284,37 +293,37 @@ export const ProcurementSimulator: React.FC<ProcurementSimulatorProps> = ({ avai
             </div>
           </div>
 
-          {/* KPI 3: Estimated Imbalance Savings */}
+          {/* KPI 3: Avoided Cash-Out Penalties */}
           <div className="glass-panel stat-card">
             <div className="stat-title">
-              <span>Avoided Cash-Out Penalties</span>
+              <span>Avoided Imbalance Penalties</span>
               <Coins size={16} style={{ color: 'var(--accent-emerald)' }} />
             </div>
             <div className="stat-value mono" style={{ color: '#34d399' }}>
-              {simResult.total_imbalance_savings_gbp
-                ? `£${Math.round(simResult.total_imbalance_savings_gbp).toLocaleString()}`
+              {simResult.total_avoided_penalties_gbp !== null && simResult.total_avoided_penalties_gbp !== undefined
+                ? `£${Math.round(simResult.total_avoided_penalties_gbp).toLocaleString()}`
                 : '£0'}
             </div>
             <div className="stat-subtitle">
-              <span>Net value created vs naive bidding</span>
+              <span>Gross balancing cash-out fines averted</span>
             </div>
           </div>
 
-          {/* KPI 4: Net Thermal Cost Difference */}
+          {/* KPI 4: Net Strategy Financial Benefit */}
           <div className="glass-panel stat-card">
             <div className="stat-title">
-              <span>Thermal Hedge Premium</span>
+              <span>Net Strategy Financial Savings</span>
               <DollarSign size={16} style={{ color: 'var(--accent-amber)' }} />
             </div>
-            <div className="stat-value mono">
-              £
-              {Math.round(
-                (simResult.hedged_thermal_procured_mwh - simResult.naive_thermal_procured_mwh) *
-                  simResult.thermal_cost_per_mwh
-              ).toLocaleString()}
+            <div className="stat-value mono" style={{
+              color: (simResult.total_imbalance_savings_gbp ?? 0) >= 0 ? '#38bdf8' : '#fb7185'
+            }}>
+              {simResult.total_imbalance_savings_gbp !== null && simResult.total_imbalance_savings_gbp !== undefined
+                ? `${simResult.total_imbalance_savings_gbp >= 0 ? '+' : ''}£${Math.round(simResult.total_imbalance_savings_gbp).toLocaleString()}`
+                : '£0'}
             </div>
             <div className="stat-subtitle">
-              <span>Insures against £{Math.round(simResult.thermal_cost_per_mwh * simResult.cashout_penalty_multiplier)}/MWh cash-out spikes</span>
+              <span>Net profit after paying day-ahead thermal hedge</span>
             </div>
           </div>
         </div>

@@ -136,6 +136,7 @@ class ProcurementSimResponse(BaseModel):
     naive_thermal_procured_mwh: float
     hedged_thermal_procured_mwh: float
     recommended_safety_buffer_avg_mw: float
+    total_avoided_penalties_gbp: Optional[float] = None
     total_imbalance_savings_gbp: Optional[float] = None
     periods: List[ProcurementPeriodItem]
 
