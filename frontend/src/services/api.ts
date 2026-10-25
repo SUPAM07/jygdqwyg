@@ -84,12 +84,20 @@ export async function simulateProcurement(req: ProcurementSimRequest): Promise<P
   return res.json();
 }
 
-export async function triggerSync(dateFrom: string = '2026-01-01', dateTo: string = '2026-01-31'): Promise<{ status: string; message: string }> {
+export async function triggerSync(
+  dateFrom: string = '2026-01-01',
+  dateTo: string = '2026-01-02',
+  signal?: AbortSignal
+): Promise<{ status: string; message: string; actuals_synced?: number; forecasts_synced?: number }> {
   const res = await fetch(`${API_BASE}/sync/refresh`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ date_from: dateFrom, date_to: dateTo }),
+    signal,
   });
-  if (!res.ok) throw new Error(`Sync trigger failed: ${res.statusText}`);
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.detail || `Sync trigger failed: ${res.statusText}`);
+  }
   return res.json();
 }
