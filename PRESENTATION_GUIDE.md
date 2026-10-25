@@ -5,8 +5,8 @@
 
 ---
 
-## Quick Navigation in the Application
-> The application features a built-in interactive **"Pitch & Tech Review"** presentation deck located in the top-right navbar. You can launch this modal anytime during your recording to present slides with live visual bullet points, or navigate directly through the live portal tabs!
+## Video Recording Guide
+> Use this guide as your spoken script while sharing your screen and navigating through the live web application tabs (**Day-Ahead Dispatch**, **Quantified Error Audit**, **Procurement & Hedge Sim**, and **Forecast Vintages**)!
 
 ---
 

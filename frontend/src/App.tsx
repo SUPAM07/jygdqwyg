@@ -4,13 +4,11 @@ import { DayAheadViewer } from './components/DayAheadViewer';
 import { ErrorAnalytics } from './components/ErrorAnalytics';
 import { ProcurementSimulator } from './components/ProcurementSimulator';
 import { ForecastVintages } from './components/ForecastVintages';
-import { PitchModal } from './components/PitchModal';
 import { DataSyncModal } from './components/DataSyncModal';
 import { fetchAvailableDates } from './services/api';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('day-ahead');
-  const [isPitchOpen, setIsPitchOpen] = useState<boolean>(false);
   const [isSyncOpen, setIsSyncOpen] = useState<boolean>(false);
   const [availableDates, setAvailableDates] = useState<string[]>([
     '2026-01-01', '2026-01-02', '2026-01-03', '2026-01-04', '2026-01-05',
@@ -40,7 +38,6 @@ export const App: React.FC = () => {
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenPitch={() => setIsPitchOpen(true)}
         onOpenSync={() => setIsSyncOpen(true)}
       />
 
@@ -80,9 +77,6 @@ export const App: React.FC = () => {
           </div>
         </div>
       </footer>
-
-      {/* Interactive Pitch & Tech Review Presentation Modal */}
-      <PitchModal isOpen={isPitchOpen} onClose={() => setIsPitchOpen(false)} />
 
       {/* Data Sync & Status Modal */}
       <DataSyncModal isOpen={isSyncOpen} onClose={() => setIsSyncOpen(false)} />

@@ -1,17 +1,15 @@
 import React from 'react';
-import { Wind, Activity, Clock, Database, Presentation, Zap } from 'lucide-react';
+import { Wind, Activity, Clock, Database, Zap } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  onOpenPitch: () => void;
   onOpenSync: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
-  onOpenPitch,
   onOpenSync,
 }) => {
   return (
@@ -133,16 +131,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <Database size={15} style={{ color: 'var(--accent-cyan)' }} />
             <span>Data Sync</span>
-          </button>
-
-          {/* Video Pitch & Review Modal Button */}
-          <button
-            onClick={onOpenPitch}
-            className="btn btn-primary"
-            style={{ padding: '7px 14px', fontSize: '0.8rem' }}
-          >
-            <Presentation size={15} />
-            <span>Pitch & Tech Review</span>
           </button>
         </div>
       </div>

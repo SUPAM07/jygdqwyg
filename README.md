@@ -104,12 +104,11 @@ Analyzing official Elexon BMRS data across all 31 delivery days of **January 202
     ├── public/
     ├── src/
     │   ├── components/
-    │   │   ├── Navbar.tsx          # Navigation, GB grid frequency badge, sync & pitch modal triggers
+    │   │   ├── Navbar.tsx          # Navigation, GB grid frequency badge, sync status modal trigger
     │   │   ├── DayAheadViewer.tsx  # Req 1: Latest forecast at DA gate, dual-axis chart, CSV export
     │   │   ├── ErrorAnalytics.tsx  # Req 2: Quantified audit, MAE/RMSE/Bias, diurnal profile, quantiles
     │   │   ├── ProcurementSimulator.tsx # Commercial Sim: demand, empirical buffer, avoided cash-out
     │   │   ├── ForecastVintages.tsx# 48h, 24h, 14h, 6h lead-time convergence tracking
-    │   │   ├── PitchModal.tsx      # Built-in presentation deck (Client Pitch & Tech Lead Review)
     │   │   └── DataSyncModal.tsx   # Live BMRS streaming status & on-demand sync trigger
     │   ├── services/
     │   │   └── api.ts              # Fetch client communicating with backend
@@ -148,7 +147,7 @@ Analyzing official Elexon BMRS data across all 31 delivery days of **January 202
 |                                    * Day-Ahead Dispatch Viewer (Dual-Axis Chart.js + CSV Export)   |
 |                                    * Quantified Error Audit (Daily Timeseries + Diurnal Hours)     |
 |                                    * Wholesale Thermal Procurement Decision Simulator              |
-|                                    * Built-in Client Pitch & Tech Review Presentation Engine       |
+|                                    * Real-time Elexon BMRS Data Synchronization Stream             |
 |                                                                                                    |
 +----------------------------------------------------------------------------------------------------+
 ```
